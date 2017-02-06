@@ -18,6 +18,7 @@ class AudioManager {
     
     static let sharedInstance = AudioManager()
     private init(){
+        try? AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
         let beepURL = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("beep", ofType: ".wav") ?? "")
         let bellURL = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("boxing_bell", ofType: ".wav") ?? "")
         beepAudioPlayer = try? AVAudioPlayer(contentsOfURL: beepURL)
@@ -42,10 +43,10 @@ class AudioManager {
     func playEndBell(){
         playBell()
         delay(0.25){
-            bellAudioPlayer2?.play()
+            self.bellAudioPlayer2?.play()
         }
         delay(0.5){
-            bellAudioPlayer3?.play()
+            self.bellAudioPlayer3?.play()
         }
     }
     

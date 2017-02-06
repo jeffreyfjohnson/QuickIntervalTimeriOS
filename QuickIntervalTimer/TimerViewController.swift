@@ -18,6 +18,7 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
     @IBOutlet var resetButton: UIButton!
     @IBOutlet var startPauseButton: UIButton!
     @IBOutlet var timerLabel: UILabel!
+    @IBOutlet var totalTimeLabel: UILabel!
     @IBOutlet var circleView: AnimationView!
     
     @IBOutlet var upNextLabel: UILabel!
@@ -43,18 +44,39 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
         if clock.isRunning{
             clock.recordPause()
             clock.toggleStartPause(false)
-            
-            let notif = UILocalNotification()
-            notif.fireDate = NSDate(timeIntervalSinceNow: 2)
-            notif.timeZone = NSTimeZone.defaultTimeZone()
-            notif.alertBody = "asdf"
-            notif.soundName = UILocalNotificationDefaultSoundName
-            UIApplication.sharedApplication().scheduleLocalNotification(notif)
+            let currentIndex = intervalTimer.currentIntervalIndex
+            let n = intervalTimer.numberOfIntervals()
+            let elapsedTime = clock.elapsedTime
+            let totalDuration = Double(intervalTimer.totalDuration())
+            var cumulativeTime = Double(intervalTimer.completedIntervalTime)
+            for i in currentIndex..<n{
+                let interval = intervalTimer.intervalList[i]
+                
+                let notif = UILocalNotification()
+                notif.timeZone = NSTimeZone.defaultTimeZone()
+                notif.soundName = "bell.aifc"
+                
+                cumulativeTime += Double(interval.duration)
+                notif.fireDate = NSDate(timeIntervalSinceNow: (cumulativeTime - elapsedTime))
+                if (i >= n-1){
+                    notif.alertTitle = String(format: "Final Round Over!", arguments: [(currentIndex+1)])
+                    notif.alertBody = "\(TimeUtils.formatTimeForListDisplay(Int(totalDuration))) completed"
+
+                }else{
+                    notif.alertTitle = String(format: "Round %1d Over!", arguments: [(i+1)])
+                    let totalTimeLeft = TimeUtils.formatTimeForListDisplay(Int(totalDuration - cumulativeTime))
+                    let nextRoundTime = TimeUtils.formatTimeForListDisplay(intervalTimer.intervalList[i+1].duration)
+                    notif.alertBody = "\(totalTimeLeft) left, next round: \(nextRoundTime)"
+                }
+                
+                UIApplication.sharedApplication().scheduleLocalNotification(notif)
+            }
         }
     }
     
     func applicationWillEnterForeground(){
         clock.restartIfTemporarilyPaused()
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -158,9 +180,7 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
             return
         }
         var timeLeftInInterval = Double(currentInterval.duration) - (time - Double(intervalTimer.completedIntervalTime))
-        
         if (timeLeftInInterval <= 0){
-            timeLeftInInterval = 0
             if (intervalTimer.isOnLastInterval()){
                 showHideButton(startPauseButton, show: false)
                 showHideButton(resetButton, show: true)
@@ -169,16 +189,19 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
                     self.startPauseButton.setTitle("Start", forState: .Normal)
                     self.startPauseButton.layoutIfNeeded()
                 })
-                AudioManager.sharedInstance.playEndBell()
+                if timeLeftInInterval > -1.0{
+                    AudioManager.sharedInstance.playEndBell()
+                }
             }
             else{
-                if currentInterval.ringBellAtEnd{
+                if currentInterval.ringBellAtEnd && timeLeftInInterval > -1.0{
                     AudioManager.sharedInstance.playBell()
                 }
                 intervalTimer.nextInterval()
                 setBackgroundColor()
                 setInfoLabels()
             }
+            timeLeftInInterval = 0
             beepCount = 0
         }
         else{
@@ -189,7 +212,8 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
             }
         }
         timerLabel.text = TimeUtils.formatTimeForTimer(timeLeftInInterval)
-        
+        let timeLeft = totalDuration - Int(clock.elapsedTime)
+        totalTimeLabel.text = TimeUtils.formatTimeForListDisplay(timeLeft >= 0 ? timeLeft : 0)
         let doneRatio = timeLeftInInterval/Double(currentInterval.duration)
         circleView.currentOuterAngle = Float(270.0 - 360.0 * doneRatio)
         let totalDoneRatio = (Double(currentInterval.duration) - timeLeftInInterval + Double(intervalTimer.completedIntervalTime))/Double(totalDuration)
