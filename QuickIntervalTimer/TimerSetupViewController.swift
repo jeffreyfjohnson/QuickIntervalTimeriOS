@@ -7,8 +7,10 @@
 //
 
 import UIKit
-
-class TimerSetupViewController: UIViewController {
+#if FREE
+import iAd
+#endif
+class TimerSetupViewController: UIViewController, ADBannerViewDelegate {
     
     var intervalTableViewController: IntervalTableViewController!
     var intervalTimer = IntervalTimer(intervalList: [Interval]())
@@ -29,7 +31,11 @@ class TimerSetupViewController: UIViewController {
         timeButton.layer.cornerRadius = 5
         timeButton.layer.borderWidth = 1
         timeButton.layer.borderColor = UIColor.lightGrayColor().CGColor
-
+        
+        #if FREE
+            self.canDisplayBannerAds = true
+            
+        #endif
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -39,6 +45,15 @@ class TimerSetupViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func bannerViewWillLoadAd(banner: ADBannerView!) {
+        print("will load")
+    }
+    
+    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
+        print("error")
+        print(error)
     }
     
     @IBAction func timeTapped(sender: AnyObject) {
@@ -82,6 +97,21 @@ class TimerSetupViewController: UIViewController {
         if (identifier == "repeat_select_segue" && intervalTableViewController.editing){
             return false
         }
+        if (identifier == "saved_timers_segue"){
+            #if FREE
+                let alert = UIAlertController(title: "Upgrade to Pro", message: "Saved Timers are only available on Quick Interval Timer Pro! Tap OK to go to the App Store", preferredStyle: .Alert)
+                let okButton = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default){
+                    (action) in
+                    UIApplication.sharedApplication().openURL(NSURL(string: "itms://itunes.apple.com/de/app/x-gift/id839686104?mt=8&uo=4")!)
+                }
+                alert.addAction(okButton)
+                let noThanksButton = UIAlertAction(title: "No, Thanks", style: UIAlertActionStyle.Cancel, handler: nil)
+                alert.addAction(noThanksButton)
+                presentViewController(alert, animated: false){}
+                return false
+            #endif
+        }
+        
         return true
     }
     
@@ -129,7 +159,6 @@ class TimerSetupViewController: UIViewController {
         }
         else if (segue.identifier == "saved_timers_segue"){
             let savedTimersViewController = segue.destinationViewController as! SavedTimersViewController
-            
             savedTimersViewController.currentTimer = intervalTimer
             savedTimersViewController.onTimerSelected = { [weak self]
                 (timer) in

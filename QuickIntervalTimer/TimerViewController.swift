@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import iAd
 
 class TimerViewController: UIViewController, TimeUpdateDelegate {
     var clock: Clock = Clock()
@@ -38,6 +39,10 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
         let notificationCenter = NSNotificationCenter.defaultCenter()
         notificationCenter.addObserver(self, selector: "applicationDidEnterBackground", name: UIApplicationDidEnterBackgroundNotification, object: nil)
         notificationCenter.addObserver(self, selector: "applicationWillEnterForeground", name: UIApplicationWillEnterForegroundNotification, object: nil)
+        
+        #if FREE
+            self.canDisplayBannerAds = true
+        #endif
     }
     
     func applicationDidEnterBackground(){
@@ -81,6 +86,7 @@ class TimerViewController: UIViewController, TimeUpdateDelegate {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        UIApplication.sharedApplication().idleTimerDisabled = false
         UIApplication.sharedApplication().idleTimerDisabled = true
     }
     

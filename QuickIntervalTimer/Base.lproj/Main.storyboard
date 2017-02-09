@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="14F2109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="kSe-5i-xmH">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -321,12 +320,6 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s8T-PY-sek" customClass="AnimationView" customModule="QuickIntervalTimer" customModuleProvider="target">
                                 <rect key="frame" x="43" y="253" width="290" height="290"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="abe-Sv-GOz">
-                                        <rect key="frame" x="25" y="145" width="5" height="128"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="s8T-PY-sek" secondAttribute="height" multiplier="1:1" id="FFP-GG-seo"/>
@@ -421,22 +414,46 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nAG-k4-QzB">
                                 <rect key="frame" x="281" y="205" width="70" height="40"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="THb-CA-6G1"/>
+                                    <constraint firstAttribute="height" constant="40" id="kgl-6s-j9Y"/>
                                     <constraint firstAttribute="width" constant="70" id="tla-0u-zkC"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Reset"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="THb-CA-6G1"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="THb-CA-6G1"/>
+                                    </mask>
+                                </variation>
                                 <connections>
                                     <action selector="onResetTapped:" destination="0Sp-U0-lUr" eventType="touchUpInside" id="vnO-K6-6fU"/>
                                     <action selector="resetLapTapped:" destination="PVo-N0-Km4" eventType="touchUpInside" id="kVT-W5-AyU"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DFC-Fe-dh8">
-                                <rect key="frame" x="24" y="205" width="70" height="36"/>
+                                <rect key="frame" x="24" y="205" width="70" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="ZKc-JZ-UlA"/>
+                                    <constraint firstAttribute="height" constant="40" id="j1k-b8-dGV"/>
+                                    <constraint firstAttribute="height" constant="36" id="xUy-gp-fVN"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Start"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="xUy-gp-fVN"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="xUy-gp-fVN"/>
+                                    </mask>
+                                </variation>
                                 <connections>
                                     <action selector="onStartPauseTapped:" destination="0Sp-U0-lUr" eventType="touchUpInside" id="3fe-Ac-TNh"/>
                                     <action selector="startPauseTapped:" destination="PVo-N0-Km4" eventType="touchUpInside" id="ILV-Cr-KpW"/>
@@ -464,6 +481,7 @@
                             </constraint>
                             <constraint firstItem="s8T-PY-sek" firstAttribute="centerX" secondItem="bYA-f4-c4K" secondAttribute="centerX" id="9hL-Q2-IFo"/>
                             <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="s8T-PY-sek" secondAttribute="trailing" constant="26" id="Ai6-JU-vYR"/>
+                            <constraint firstItem="s8T-PY-sek" firstAttribute="top" secondItem="DFC-Fe-dh8" secondAttribute="bottom" constant="8" id="JSN-l6-dwS"/>
                             <constraint firstItem="Kbm-gp-7Kh" firstAttribute="top" relation="greaterThanOrEqual" secondItem="nAG-k4-QzB" secondAttribute="bottom" constant="9" id="KPQ-fu-7fu"/>
                             <constraint firstItem="DFC-Fe-dh8" firstAttribute="leading" secondItem="bYA-f4-c4K" secondAttribute="leadingMargin" constant="8" id="PeI-ey-sOC"/>
                             <constraint firstItem="mMI-FR-s1m" firstAttribute="top" secondItem="Kbm-gp-7Kh" secondAttribute="bottom" constant="2" id="QE6-1r-nAQ"/>
@@ -500,6 +518,7 @@
                             <mask key="constraints">
                                 <include reference="0qV-fL-lPM"/>
                                 <exclude reference="25d-TY-ZN1"/>
+                                <exclude reference="JSN-l6-dwS"/>
                                 <exclude reference="fnb-wT-59X"/>
                                 <include reference="KPQ-fu-7fu"/>
                                 <include reference="xOi-r2-bWx"/>
